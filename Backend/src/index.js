@@ -11,7 +11,7 @@ dotenv.config({
 
 connectDB()
         .then(() => {
-            app.listen(process.env.PORT || 3000, () => {`App is listening at https://localhost:${process.env.PORT || 3000}`});
+            app.listen(process.env.PORT || 3000, () => {console.log(`App is listening at https://localhost:${process.env.PORT || 3000}`)});
 
         })
         .catch((error) => {
