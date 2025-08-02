@@ -16,11 +16,11 @@ const userSchema = new schema(
         role: {
             type: String,
             enum: ["admin", "viewer"],
-            default: "admin",
-            createdAt: {
-                type: Date,
-                dafault: Date.now
-            }
+            default: "admin"
+        },
+        createdAt: {
+            type: Date,
+            dafault: Date.now
         }
     }
 )
