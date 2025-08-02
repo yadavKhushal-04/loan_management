@@ -49,7 +49,7 @@ userSchema.methods.toJSON = function () {
     return userObject;
 };
 
-
+//don't waste your time here
 
 userSchema.methods.generateAccessToken = function(){
     return jwt.sign(
