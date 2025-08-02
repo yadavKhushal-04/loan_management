@@ -1,0 +1,26 @@
+import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
+import mongoose, {Schema as schema} from "mongoose"
+
+const borrowerSchema = new schema(
+    {
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true,
+            index: true,
+        },
+        phone: {
+            type: String,
+            required: true,
+        },
+        address: {
+            type: String,
+        }
+    },
+    {
+        timestamps: true
+    }
+)
+export const Borrower = mongoose.model("Borrower", borrowerSchema);
