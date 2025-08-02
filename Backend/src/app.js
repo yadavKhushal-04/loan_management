@@ -14,4 +14,9 @@ app.use(express.urlencoded({extended:true, limit: "100kb"}))
 app.use(express.static("public"))
 app.use(cookieParser())
 
+
+// app.use('/api/auth', require('./routes/auth'));
+// app.use('/api/borrowers', require('./routes/borrowers'));
+
+
 export {app}
