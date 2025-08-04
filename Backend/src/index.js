@@ -5,7 +5,7 @@ import dotenv from "dotenv"
 
 //can also use "nodemon -r dotenv/config --experimental-json-modules src/index.js" in place of nodemon src/index.js in package.json
 dotenv.config({
-    path: './env'
+    path: './.env'
 })
 
 
