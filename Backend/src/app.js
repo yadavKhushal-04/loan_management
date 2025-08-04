@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser"
 
 
 import authRoutes from "./routes/auth.js"
+import borrowerRoutes from "./routes/borrower.js"
 
 
 const app = express()
@@ -19,6 +20,7 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 app.use('/api/auth', authRoutes)
+app.use('/api/borrowers', borrowerRoutes)
 
 // app.use('/api/auth', require('./routes/auth'));
 // app.use('/api/borrowers', require('./routes/borrowers'));

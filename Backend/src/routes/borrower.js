@@ -1,14 +1,18 @@
-import express from 'express';
-import { authenticateToken } from '../middleware/authMiddleware.js';
+import { authenticateUser, requireRole } from '../middlewares/auth.middleware.js';
+import express from "express"
 import {
-    getBorrowers,
-    createBorrower
-} from '../controllers/borrowers.js';
+    createBorrower,
+    addLoanToBorrower,
+    getAllBorrowers,
+    getBorrowerById
+} from '../controllers/borrower.controller.js';
 
-const router = express.Router();
+const router = express.Router()
 
-router.route('/')
-    .get(authenticateToken, getBorrowers)
-    .post(authenticateToken, createBorrower);
+router.post('/create', authenticateUser, requireRole('admin'), createBorrower);
+router.post('/:id/add-loan', authenticateUser, requireRole('admin'), addLoanToBorrower);
 
-export default router;
+router.get('/', authenticateUser, getAllBorrowers); // any logged-in user
+router.get('/:id', authenticateUser, getBorrowerById);
+
+export default router

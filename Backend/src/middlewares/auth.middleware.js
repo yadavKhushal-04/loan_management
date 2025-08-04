@@ -1,19 +1,34 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
-export const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers.authorization;
+export const authenticateUser = (req, res, next) => {
+  const authHeader = req.headers.authorization;
 
-    // Token should be in format: "Bearer <token>"
-    const token = authHeader && authHeader.split(" ")[1];
-    if (!token) {
-        return res.status(401).json({ message: "Access token missing" });
-    }
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, message: 'Unauthorized: No token provided' });
+  }
 
-    try {
-        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        req.user = decoded; // Attach user info to request
-        next();
-    } catch (err) {
-        return res.status(403).json({ message: "Invalid or expired token" });
-    }
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    req.user = decoded; // attach user payload to request
+    next();
+  } catch (err) {
+    return res.status(401).json({ success: false, message: 'Invalid or expired token' });
+  }
 };
+
+
+export const requireRole = (role) => {
+  return (req, res, next) => {
+    if (!req.user || req.user.role !== role) {
+      return res.status(403).json({
+        success: false,
+        message: `Forbidden: Requires ${role} role`,
+      });
+    }
+    next();
+  };
+};
+
+export {requireRole, authenticateUser}

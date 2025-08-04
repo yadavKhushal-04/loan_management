@@ -2,7 +2,8 @@ import {User} from "../models/users.model.js"
 
 const registerUser = async (req,res) => {
     try{
-        const {userName, fullName, password} = req.body
+        // const {userName, fullName, password} = req.body
+        const { userName, fullName, password, role } = req.body;
 
         if(!userName || !fullName || !password){
             return res.status(400).json({
@@ -37,6 +38,16 @@ const registerUser = async (req,res) => {
             accessToken,
             refreshToken
         })
+
+        // In register route:
+
+        if (role && role !== 'viewer') {
+            // Only allow role elevation if the current user is admin (or skip role assignment entirely)
+            return res.status(403).json({ success: false, message: "You can't assign admin role directly" });
+        }
+
+        const newUser = new User({ userName, fullName, password, role: 'viewer' }); // force viewer
+
 
     }
     catch(error){
