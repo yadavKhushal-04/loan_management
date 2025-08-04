@@ -72,9 +72,9 @@ const getBorrowerById = async (req,res) => {
 }
 
 
-const getOverdueBorrowers = async (req,res){
+const getOverdueBorrowers = async (req,res) => {
     try{
-        
+
     }
     catch(err){
         res.status(400).json({

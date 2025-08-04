@@ -13,7 +13,7 @@ import {
 const router = express.Router()
 
 router.route('/:borrowerId')
-                            .post(authenticateUser, requireRole('admin', createLoan))
+                            .post(authenticateUser, requireRole('admin'), createLoan)
                             .get(authenticateUser, getLoansByBorrower)
 
 export default router
