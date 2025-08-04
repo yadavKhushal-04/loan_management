@@ -1,5 +1,6 @@
 import {Borrower} from "../models/borrower.model.js"
 import {Loan} from "../models/loan.model.js"
+import {Payment} from "../models/payment.model.js"
 
 const createBorrower = async (req,res) => {
     try{
@@ -68,6 +69,19 @@ const getBorrowerById = async (req,res) => {
     }
 
     res.json(borrowers)
+}
+
+
+const getOverdueBorrowers = async (req,res){
+    try{
+        
+    }
+    catch(err){
+        res.status(400).json({
+            success: false,
+            message: `Failed to add loan to borrower, ${err.message}`
+        })
+    }
 }
 
 
