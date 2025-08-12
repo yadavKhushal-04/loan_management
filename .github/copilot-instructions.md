@@ -1,5 +1,3 @@
-# Copilot Instructions for Manage_Loan
-
 ## Overview
 This monorepo manages a loan tracking system with a Node.js/Express backend and a React frontend. It tracks borrowers, loans, and payments, and exposes REST APIs for frontend consumption.
 
@@ -41,12 +39,11 @@ This monorepo manages a loan tracking system with a Node.js/Express backend and 
 - **MongoDB**: All persistent data via Mongoose models.
 
 ## Examples
-- Add a payment: `POST /api/payments/:loanId` (see `payment.controller.js`)
-- Fetch borrowers: `GET /api/borrowers` (see `borrower.controller.js`)
+- Add a payment: `POST /api/payments/:loanId`
+- Fetch borrowers: `GET /api/borrowers`
 
 ## References
 - [DB Structure Diagram](https://dbdiagram.io/d/688e0d4ecca18e685cefe1eb)
 - [Model Link](https://app.eraser.io/workspace/NhjAdZjnNcX0dJGYKf3J)
 
 ---
-If any conventions or workflows are unclear, please ask for clarification or check the referenced files.
