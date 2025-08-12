@@ -49,8 +49,12 @@ const loanSchema = new schema(
                 type: String,
             },
             address: {
-                type: string
+                type: String
             }
+        },
+        payments: {
+            type: schema.Types.ObjectId,
+            ref: 'Payment'
         },
         createdAt: {
             type: Date,

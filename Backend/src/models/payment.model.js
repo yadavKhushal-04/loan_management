@@ -23,7 +23,7 @@ const paymentSchema = new schema(
             type: String,
         },
         note: {
-            type: string
+            type: String
         }
     }
 )

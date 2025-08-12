@@ -74,7 +74,36 @@ const getBorrowerById = async (req,res) => {
 
 const getOverdueBorrowers = async (req,res) => {
     try{
+        const borrowers = await Borrower.find().populate({
+            path: 'loans',
+            populate: { path: 'payments' }
+        });
 
+        const now = new Date();
+        const overdueBorrowers = [];
+
+        borrowers.forEach(borrower => {
+            let isOverdue = false;
+
+            borrower.loans.forEach(loan => {
+                const payments = loan.payments || [];
+                const lastPaymentDate = payments.length > 0 ? new Date(payments[payments.length - 1].paymentDate): new Date(loan.startDate);
+
+                const monthsLate = (now.getFullYear() - lastPaymentDate.getFullYear()) * 12 +(now.getMonth() - lastPaymentDate.getMonth());
+
+                if (monthsLate >= 4) {
+                    isOverdue = true;
+                }
+            });
+
+        if (isOverdue) overdueBorrowers.push(borrower);
+        
+        });
+
+        res.json({
+            success: true,
+            overdue: overdueBorrowers 
+        });
     }
     catch(err){
         res.status(400).json({
@@ -85,4 +114,4 @@ const getOverdueBorrowers = async (req,res) => {
 }
 
 
-export {createBorrower, addLoanToBorrower ,getAllBorrowers, getBorrowerById}
+export {createBorrower, addLoanToBorrower ,getAllBorrowers, getBorrowerById, getOverdueBorrowers}

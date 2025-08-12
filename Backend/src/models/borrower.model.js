@@ -1,5 +1,3 @@
-import jwt from "jsonwebtoken"
-import bcrypt from "bcrypt"
 import mongoose, {Schema as schema} from "mongoose"
 
 const borrowerSchema = new schema(
