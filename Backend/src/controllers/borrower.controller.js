@@ -68,50 +68,88 @@ const getBorrowerById = async (req,res) => {
         })
     }
 
-    res.json(borrowers)
+    res.json(borrower)
 }
 
+const getOverdueBorrowers = async (req, res) => {
+  try {
+    const borrowers = await Borrower.find().populate({
+      path: 'loans',
+      populate: { path: 'payments' }
+    });
 
-const getOverdueBorrowers = async (req,res) => {
-    try{
-        const borrowers = await Borrower.find().populate({
-            path: 'loans',
-            populate: { path: 'payments' }
-        });
+    const now = new Date();
+    const overdueBorrowers = [];
 
-        const now = new Date();
-        const overdueBorrowers = [];
+    for (const b of borrowers) {
+      let isOverdue = false;
 
-        borrowers.forEach(borrower => {
-            let isOverdue = false;
+      for (const loan of (b.loans || [])) {
+        const payments = loan.payments || [];
+        let lastPaymentDate = payments.length > 0
+          ? new Date(payments[payments.length - 1].paymentDate)
+          : new Date(loan.startDate);
 
-            borrower.loans.forEach(loan => {
-                const payments = loan.payments || [];
-                const lastPaymentDate = payments.length > 0 ? new Date(payments[payments.length - 1].paymentDate): new Date(loan.startDate);
+        const monthsLate = (now.getFullYear() - lastPaymentDate.getFullYear()) * 12
+          + (now.getMonth() - lastPaymentDate.getMonth());
 
-                const monthsLate = (now.getFullYear() - lastPaymentDate.getFullYear()) * 12 +(now.getMonth() - lastPaymentDate.getMonth());
+        if (monthsLate >= 4) {
+          isOverdue = true;
+          break;
+        }
+      }
 
-                if (monthsLate >= 4) {
-                    isOverdue = true;
-                }
-            });
+      if (isOverdue) overdueBorrowers.push(b);
+    }
 
-        if (isOverdue) overdueBorrowers.push(borrower);
+    res.json({ success: true, overdue: overdueBorrowers });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// const getOverdueBorrowers = async (req,res) => {
+//     try{
+//         const borrowers = await Borrower.find().populate({
+//             path: 'loans',
+//             populate: { path: 'payments' }
+//         });
+
+//         const now = new Date();
+//         const overdueBorrowers = [];
+
+//         borrowers.forEach(borrower => {
+//             let isOverdue = false;
+
+//             borrower.loans.forEach(loan => {
+//                 const payments = loan.payments || [];
+//                 const lastPaymentDate = payments.length > 0 ? new Date(payments[payments.length - 1].paymentDate): new Date(loan.startDate);
+
+//                 const monthsLate = (now.getFullYear() - lastPaymentDate.getFullYear()) * 12 +(now.getMonth() - lastPaymentDate.getMonth());
+
+//                 if (monthsLate >= 4) {
+//                     isOverdue = true;
+//                 }
+//             });
+
+//         if(isOverdue){
+//             overdueBorrowers.push(borrower)
+//         }
         
-        });
+//         });
 
-        res.json({
-            success: true,
-            overdue: overdueBorrowers 
-        });
-    }
-    catch(err){
-        res.status(400).json({
-            success: false,
-            message: `Failed to add loan to borrower, ${err.message}`
-        })
-    }
-}
+//         res.json({
+//             success: true,
+//             overdue: overdueBorrowers 
+//         });
+//     }
+//     catch(err){
+//         res.status(400).json({
+//             success: false,
+//             message: `Failed to add loan to borrower, ${err.message}`
+//         })
+//     }
+// }
 
 
 export {createBorrower, addLoanToBorrower ,getAllBorrowers, getBorrowerById, getOverdueBorrowers}
