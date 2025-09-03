@@ -1,4 +1,5 @@
 import {User} from "../models/users.model.js"
+import jwt from "jsonwebtoken"
 
 const registerUser = async (req,res) => {
     try{
@@ -101,4 +102,44 @@ const loginUser = async (req,res) => {
     }
 }
 
-export {registerUser, loginUser}
+
+const refreshAccessToken = async (req,res) => {
+    try{
+        const {refreshToken} = req.body
+
+        if(!refreshToken){
+            return res.status(400).json({
+                success: false,
+                message: `Refresh Token is required`
+            })
+        }
+
+        let payload;
+
+        try{
+            payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
+        }
+        catch(err){
+            return res.status(500).json({
+                success: false,
+                message: `Invalid or expired refresh token, ${err.message}`
+            })
+        }
+
+        const user = await User.findById(payload._id)
+        if(!user){
+            return res.status(400).json({
+                success: false,
+                message
+            })
+        }
+    }
+    catch(err){
+        res.send(500).json({
+            success: false,
+            message: `Could not refresh access token, ${err.message}`
+        })
+    }
+}
+
+export {registerUser, loginUser, refreshAccessToken}

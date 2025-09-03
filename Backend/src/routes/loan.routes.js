@@ -11,12 +11,12 @@ import {
     requireRole
 } from "../middlewares/auth.middleware.js"
 
-import {createLoanValidator} from "../middlewares/validators.js"
+import {createLoanValidator} from "../middlewares/validator.js"
 
 const router = express.Router()
 
 router.route('/:borrowerId')
-                            .post(authenticateUser, requireRole('admin'), createLoan)
+                            .post(authenticateUser, requireRole('admin'), createLoanValidator , createLoan)
                             .get(authenticateUser, getLoansByBorrower)
 
 router.route('/:loanId/witness').patch(authenticateUser, requireRole('admin'), updateLoanWitness)
