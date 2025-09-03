@@ -46,4 +46,6 @@ This monorepo manages a loan tracking system with a Node.js/Express backend and 
 - [DB Structure Diagram](https://dbdiagram.io/d/688e0d4ecca18e685cefe1eb)
 - [Model Link](https://app.eraser.io/workspace/NhjAdZjnNcX0dJGYKf3J)
 
+
+# ~~Valar Morghulis~~
 ---
