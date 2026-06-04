@@ -2,7 +2,7 @@ import mongoose, {Schema as schema} from "mongoose"
 
 const paymentSchema = new schema(
     {
-        loadId: {
+        loanId: {
             type: schema.Types.ObjectId,
             ref: "Loan",
             required: true

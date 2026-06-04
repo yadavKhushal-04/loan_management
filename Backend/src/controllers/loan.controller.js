@@ -40,7 +40,23 @@ const createLoan = async (req,res) => {
 
 const getLoansByBorrower = async (req,res) => {
     try{
+        const { borrowerId } = req.params
 
+        const borrower = await Borrower.findById(borrowerId)
+        if (!borrower) {
+            return res.status(404).json({
+                success: false,
+                message: `Borrower not found`
+            })
+        }
+
+        const loans = await Loan.find({ borrowerId }).populate('payments')
+
+        res.status(200).json({
+            success: true,
+            count: loans.length,
+            loans
+        })
     }
     catch(err){
         res.status(500).json({

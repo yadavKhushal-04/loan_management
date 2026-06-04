@@ -7,7 +7,7 @@ const loanSchema = new schema(
             ref: "Borrower",
             required: true
         },
-        principleAmount: {
+        principalAmount: {
             type: Number,
             required: true
         },
@@ -52,10 +52,10 @@ const loanSchema = new schema(
                 type: String
             }
         },
-        payments: {
+        payments: [{
             type: schema.Types.ObjectId,
             ref: 'Payment'
-        },
+        }],
         createdAt: {
             type: Date,
             default: Date.now

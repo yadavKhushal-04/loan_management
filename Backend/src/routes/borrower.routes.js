@@ -14,9 +14,9 @@ router.post('/create', authenticateUser, requireRole('admin'), createBorrower);
 router.post('/:id/add-loan', authenticateUser, requireRole('admin'), addLoanToBorrower);
 
 router.get('/', authenticateUser, getAllBorrowers); // any logged-in user
+router.get('/status/overdue', authenticateUser, requireRole('admin'), getOverdueBorrowers);
 router.get('/:id', authenticateUser, getBorrowerById);
 
-router.get('/status/overdue', authenticateUser, requireRole('admin'), getOverdueBorrowers);
 
 export default router
  
