@@ -39,8 +39,10 @@ const createLoan = async (req,res) => {
 }
 
 const getLoansByBorrower = async (req,res) => {
-    try{
+
+    try {
         const { borrowerId } = req.params
+        const { status } = req.query
 
         const borrower = await Borrower.findById(borrowerId)
         if (!borrower) {
@@ -50,7 +52,20 @@ const getLoansByBorrower = async (req,res) => {
             })
         }
 
-        const loans = await Loan.find({ borrowerId }).populate('payments')
+        const filter = { borrowerId }
+
+        if (status) {
+            const validStatuses = ["active", "completed", "defaulter"]
+            if (!validStatuses.includes(status)) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Invalid status. Must be one of: ${validStatuses.join(", ")}`
+                })
+            }
+            filter.status = status
+        }
+
+        const loans = await Loan.find(filter).populate('payments')
 
         res.status(200).json({
             success: true,
@@ -58,10 +73,10 @@ const getLoansByBorrower = async (req,res) => {
             loans
         })
     }
-    catch(err){
+    catch (err) {
         res.status(500).json({
             success: false,
-            message: `Failed to get borrower's loan details- ${err.message}`
+            message: `Failed to get borrower's loan details: ${err.message}`
         })
     }
 }

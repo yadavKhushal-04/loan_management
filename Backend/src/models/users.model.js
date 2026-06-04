@@ -22,6 +22,10 @@ const userSchema = new schema(
             enum: ["admin", "viewer"],
             default: "admin"
         },
+        refreshToken: {
+            tupe: String,
+            default: null
+        },
         createdAt: {
             type: Date,
             default: Date.now
@@ -46,6 +50,7 @@ userSchema.methods.validatePassword = async function(password){
 userSchema.methods.toJSON = function () {
     const userObject = this.toObject();
     delete userObject.password;
+    delete userObject.refreshToken;
     return userObject;
 };
 

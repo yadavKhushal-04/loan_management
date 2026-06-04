@@ -132,6 +132,13 @@ const refreshAccessToken = async (req, res) => {
             })
         }
 
+        if (user.refreshToken !== refreshToken) {
+            return res.status(401).json({
+                success: false,
+                message: `Refresh token is invalid or has been revoked`
+            })
+        }
+
         const newAccessToken = user.generateAccessToken()
 
         res.status(200).json({
@@ -147,5 +154,85 @@ const refreshAccessToken = async (req, res) => {
     }
 }
 
+const logoutUser = async (req, res) => {
+    try {
+        // req.user is available because authenticateUser middleware runs first
+        await User.findByIdAndUpdate(req.user._id, { refreshToken: null })
 
-export {registerUser, loginUser, refreshAccessToken}
+        res.status(200).json({
+            success: true,
+            message: `Logged out successfully`
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: `Logout failed: ${err.message}`
+        })
+    }
+}
+
+const getMe = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id)
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: `User not found`
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            user
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: `Failed to get user: ${err.message}`
+        })
+    }
+}
+
+const updateMe = async (req, res) => {
+    try {
+        const { fullName, password } = req.body
+
+        if (!fullName && !password) {
+            return res.status(400).json({
+                success: false,
+                message: `Provide at least one field to update`
+            })
+        }
+
+        const user = await User.findById(req.user._id)
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: `User not found`
+            })
+        }
+
+        if (fullName) user.fullName = fullName
+        if (password) user.password = password  // pre-save hook will hash it
+
+        await user.save()
+
+        res.status(200).json({
+            success: true,
+            message: `Profile updated successfully`,
+            user
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: `Failed to update profile: ${err.message}`
+        })
+    }
+}
+
+
+export {registerUser, loginUser, refreshAccessToken, logoutUser, getMe, updateMe}

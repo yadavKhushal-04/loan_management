@@ -54,8 +54,44 @@ const addLoanToBorrower = async (req,res) => {
 
 
 const getAllBorrowers = async (req,res) => {
-    const borrowers = await Borrower.find().populate('loans')
-    res.json(borrowers)
+
+    try {
+        const { search, status } = req.query
+
+        const filter = {}
+
+        if (search) {
+            filter.name = { $regex: search, $options: 'i' }  // case-insensitive
+        }
+
+        if (status) {
+            const validStatuses = ["active", "defaulter", "cleared"]
+            if (!validStatuses.includes(status)) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Invalid status. Must be one of: ${validStatuses.join(", ")}`
+                })
+            }
+            filter.status = status
+        }
+
+        const borrowers = await Borrower.find(filter).populate('loans')
+
+        res.status(200).json({
+            success: true,
+            count: borrowers.length,
+            borrowers
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: `Failed to get borrowers: ${err.message}`
+        })
+    }
+
+    // const borrowers = await Borrower.find().populate('loans')
+    // res.json(borrowers)
 }
 
 
