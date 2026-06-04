@@ -108,48 +108,46 @@ const getOverdueBorrowers = async (req, res) => {
   }
 };
 
-// const getOverdueBorrowers = async (req,res) => {
-//     try{
-//         const borrowers = await Borrower.find().populate({
-//             path: 'loans',
-//             populate: { path: 'payments' }
-//         });
 
-//         const now = new Date();
-//         const overdueBorrowers = [];
+const updateBorrowerStatus = async (req, res) => {
+    try {
+        const { id } = req.params
+        const { status } = req.body
 
-//         borrowers.forEach(borrower => {
-//             let isOverdue = false;
+        const validStatuses = ["active", "defaulter", "cleared"]
+        if (!status || !validStatuses.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid status. Must be one of: ${validStatuses.join(", ")}`
+            })
+        }
 
-//             borrower.loans.forEach(loan => {
-//                 const payments = loan.payments || [];
-//                 const lastPaymentDate = payments.length > 0 ? new Date(payments[payments.length - 1].paymentDate): new Date(loan.startDate);
+        const borrower = await Borrower.findByIdAndUpdate(
+            id,
+            { status },
+            { new: true }
+        )
 
-//                 const monthsLate = (now.getFullYear() - lastPaymentDate.getFullYear()) * 12 +(now.getMonth() - lastPaymentDate.getMonth());
+        if (!borrower) {
+            return res.status(404).json({
+                success: false,
+                message: `Borrower not found`
+            })
+        }
 
-//                 if (monthsLate >= 4) {
-//                     isOverdue = true;
-//                 }
-//             });
-
-//         if(isOverdue){
-//             overdueBorrowers.push(borrower)
-//         }
-        
-//         });
-
-//         res.json({
-//             success: true,
-//             overdue: overdueBorrowers 
-//         });
-//     }
-//     catch(err){
-//         res.status(400).json({
-//             success: false,
-//             message: `Failed to add loan to borrower, ${err.message}`
-//         })
-//     }
-// }
+        res.status(200).json({
+            success: true,
+            message: `Borrower status updated to "${status}"`,
+            borrower
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: `Failed to update borrower status: ${err.message}`
+        })
+    }
+}
 
 
-export {createBorrower, addLoanToBorrower ,getAllBorrowers, getBorrowerById, getOverdueBorrowers}
+export {createBorrower, addLoanToBorrower ,getAllBorrowers, getBorrowerById, getOverdueBorrowers, updateBorrowerStatus}

@@ -5,7 +5,8 @@ import {
     addLoanToBorrower,
     getAllBorrowers,
     getBorrowerById,
-    getOverdueBorrowers
+    getOverdueBorrowers,
+    updateBorrowerStatus
 } from '../controllers/borrower.controller.js';
 
 const router = express.Router()
@@ -16,7 +17,7 @@ router.post('/:id/add-loan', authenticateUser, requireRole('admin'), addLoanToBo
 router.get('/', authenticateUser, getAllBorrowers); // any logged-in user
 router.get('/status/overdue', authenticateUser, requireRole('admin'), getOverdueBorrowers);
 router.get('/:id', authenticateUser, getBorrowerById);
-
+router.patch('/:id/status', authenticateUser, requireRole('admin'), updateBorrowerStatus)
 
 export default router
  

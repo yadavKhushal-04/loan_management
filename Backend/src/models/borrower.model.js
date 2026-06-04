@@ -19,6 +19,11 @@ const borrowerSchema = new schema(
         loans: {
             type: Schema.Types.ObjectId,
             ref: "Loan"
+        },
+        status: {
+            type: String,
+            enum: ["active", "defaulter", "cleared"],
+            default: "active"
         }
     },
     {

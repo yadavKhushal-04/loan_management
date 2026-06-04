@@ -3,7 +3,8 @@ import express from "express"
 import {
     createLoan,
     getLoansByBorrower,
-    updateLoanWitness
+    updateLoanWitness,
+    updateLoanStatus
 } from "../controllers/loan.controller.js"
 
 import {
@@ -20,5 +21,7 @@ router.route('/:borrowerId')
                             .get(authenticateUser, getLoansByBorrower)
 
 router.route('/:loanId/witness').patch(authenticateUser, requireRole('admin'), updateLoanWitness)
+
+router.route('/:loanId/status').patch(authenticateUser, requireRole('admin'), updateLoanStatus)
 
 export default router

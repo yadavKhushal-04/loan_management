@@ -98,5 +98,67 @@ const updateLoanWitness = async (req,res) => {
     }
 }
 
+const updateLoanStatus = async (req, res) => {
+    try {
+        const { loanId } = req.params
+        const { status } = req.body
 
-export {createLoan, getLoansByBorrower, updateLoanWitness}
+        const validStatuses = ["active", "completed", "defaulter"]
+        if (!status || !validStatuses.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid status. Must be one of: ${validStatuses.join(", ")}`
+            })
+        }
+
+        const loan = await Loan.findByIdAndUpdate(
+            loanId,
+            { status },
+            { new: true }
+        )
+
+        if (!loan) {
+            return res.status(404).json({
+                success: false,
+                message: `Loan not found`
+            })
+        }
+
+        // auto-update borrower status based on loan status
+        if (status === "defaulter") {
+            await Borrower.findByIdAndUpdate(loan.borrowerId, { status: "defaulter" })
+        }
+
+        else if (status === "completed" || status === "active") {
+            // check if ALL loans of this borrower are completed
+            const allLoans = await Loan.find({ borrowerId: loan.borrowerId })
+            const allCompleted = allLoans.every(l => l.status === "completed")
+
+            if (allCompleted) {
+                await Borrower.findByIdAndUpdate(loan.borrowerId, { status: "cleared" })
+            } else {
+                // if a loan is moved back to active/completed, make sure
+                // borrower isn't stuck as defaulter if no defaulter loans remain
+                const hasDefaulter = allLoans.some(l => l.status === "defaulter")
+                if (!hasDefaulter) {
+                    await Borrower.findByIdAndUpdate(loan.borrowerId, { status: "active" })
+                }
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Loan status updated to "${status}"`,
+            loan
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: `Failed to update loan status: ${err.message}`
+        })
+    }
+}
+
+
+export {createLoan, getLoansByBorrower, updateLoanWitness, updateLoanStatus}
