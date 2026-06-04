@@ -42,7 +42,7 @@ const addPayment = async (req,res) => {
         // await Loan.findByIdAndUpdate(loanId, {$push: {payments: payment._id}})
     
         res.status(201).json({
-            succesS: true,
+            success: true,
             payment
         })
     }
@@ -68,7 +68,7 @@ const getPaymentsByLoan = async (req,res) => {
     catch(err){
         res.status(500).json({
             success: false,
-            messahe: `Failed to get payment details for this loan`
+            message: `Failed to get payment details for this loan`
         })
     }
 }

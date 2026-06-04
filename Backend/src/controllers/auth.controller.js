@@ -32,7 +32,7 @@ const registerUser = async (req,res) => {
         const accessToken = user.generateAccessToken()
         const refreshToken = user.generateRefreshToken()
 
-        res.status(200).json({
+        res.status(201).json({
             success: true,
             message: `User successfully registered...`,
             user,
@@ -42,12 +42,12 @@ const registerUser = async (req,res) => {
 
         // In register route:
 
-        if (role && role !== 'viewer') {
-            // Only allow role elevation if the current user is admin (or skip role assignment entirely)
-            return res.status(403).json({ success: false, message: "You can't assign admin role directly" });
-        }
+        // if (role && role !== 'viewer') {
+        //     // Only allow role elevation if the current user is admin (or skip role assignment entirely)
+        //     return res.status(403).json({ success: false, message: "You can't assign admin role directly" });
+        // }
 
-        const newUser = new User({ userName, fullName, password, role: 'viewer' }); // force viewer
+        // const newUser = new User({ userName, fullName, password, role: 'viewer' }); // force viewer
 
 
     }
@@ -102,44 +102,89 @@ const loginUser = async (req,res) => {
     }
 }
 
+const refreshAccessToken = async (req, res) => {
+    try {
+        const { refreshToken } = req.body
 
-const refreshAccessToken = async (req,res) => {
-    try{
-        const {refreshToken} = req.body
-
-        if(!refreshToken){
+        if (!refreshToken) {
             return res.status(400).json({
                 success: false,
-                message: `Refresh Token is required`
+                message: `Refresh token is required`
             })
         }
 
-        let payload;
-
-        try{
+        let payload
+        try {
             payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
         }
-        catch(err){
-            return res.status(500).json({
+        catch (err) {
+            return res.status(401).json({
                 success: false,
-                message: `Invalid or expired refresh token, ${err.message}`
+                message: `Invalid or expired refresh token: ${err.message}`
             })
         }
 
         const user = await User.findById(payload._id)
-        if(!user){
-            return res.status(400).json({
+        if (!user) {
+            return res.status(404).json({
                 success: false,
-                message
+                message: `User not found`
             })
         }
+
+        const newAccessToken = user.generateAccessToken()
+
+        res.status(200).json({
+            success: true,
+            accessToken: newAccessToken
+        })
     }
-    catch(err){
-        res.send(500).json({
+    catch (err) {
+        res.status(500).json({
             success: false,
-            message: `Could not refresh access token, ${err.message}`
+            message: `Could not refresh access token: ${err.message}`
         })
     }
 }
+
+
+// const refreshAccessToken = async (req,res) => {
+//     try{
+//         const {refreshToken} = req.body
+
+//         if(!refreshToken){
+//             return res.status(400).json({
+//                 success: false,
+//                 message: `Refresh Token is required`
+//             })
+//         }
+
+//         let payload;
+
+//         try{
+//             payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
+//         }
+//         catch(err){
+//             return res.status(500).json({
+//                 success: false,
+//                 message: `Invalid or expired refresh token, ${err.message}`
+//             })
+//         }
+
+//         const user = await User.findById(payload._id)
+//         if(!user){
+//             return res.status(400).json({
+//                 success: false,
+//                 message
+//             })
+//         }
+//     }
+//     catch(err){
+//         res.send(500).json({
+//             success: false,
+//             message: `Could not refresh access token, ${err.message}`
+//         })
+//     }
+// }
 
 export {registerUser, loginUser, refreshAccessToken}
