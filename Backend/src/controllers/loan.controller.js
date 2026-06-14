@@ -38,8 +38,8 @@ const createLoan = async (req,res) => {
     }
 }
 
-const getLoansByBorrower = async (req,res) => {
 
+const getLoansByBorrower = async (req, res) => {
     try {
         const { borrowerId } = req.params
         const { status } = req.query
@@ -76,10 +76,55 @@ const getLoansByBorrower = async (req,res) => {
     catch (err) {
         res.status(500).json({
             success: false,
-            message: `Failed to get borrower's loan details: ${err.message}`
+            message: `Failed to get borrower's loans: ${err.message}`
         })
     }
 }
+
+
+
+// const getLoansByBorrower = async (req,res) => {
+
+//     try {
+//         const { borrowerId } = req.params
+//         const { status } = req.query
+
+//         const borrower = await Borrower.findById(borrowerId)
+//         if (!borrower) {
+//             return res.status(404).json({
+//                 success: false,
+//                 message: `Borrower not found`
+//             })
+//         }
+
+//         const filter = { borrowerId }
+
+//         if (status) {
+//             const validStatuses = ["active", "completed", "defaulter"]
+//             if (!validStatuses.includes(status)) {
+//                 return res.status(400).json({
+//                     success: false,
+//                     message: `Invalid status. Must be one of: ${validStatuses.join(", ")}`
+//                 })
+//             }
+//             filter.status = status
+//         }
+
+//         const loans = await Loan.find(filter).populate('payments')
+
+//         res.status(200).json({
+//             success: true,
+//             count: loans.length,
+//             loans
+//         })
+//     }
+//     catch (err) {
+//         res.status(500).json({
+//             success: false,
+//             message: `Failed to get borrower's loan details: ${err.message}`
+//         })
+//     }
+// }
 
 
 const updateLoanWitness = async (req,res) => {

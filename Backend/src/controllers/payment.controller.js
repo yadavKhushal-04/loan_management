@@ -1,6 +1,7 @@
 import {Payment} from "../models/payment.model.js"
 import {Loan} from "../models/loan.model.js"
 import asyncHandler from "../utils/asyncHandle.js"
+import paginate from "../utils/paginate.js"
 
 //addPayment function is still async
 // const addPayment = asyncHandler(async (req,res) => {
@@ -55,23 +56,50 @@ const addPayment = async (req,res) => {
 }
 
 
-const getPaymentsByLoan = async (req,res) => {
-    try{
-        const {loanId} = req.params
-        const payments = await Payment.find({loan: loanId}).sort({paymentDate: 1})
-        
+const getPaymentsByLoan = async (req, res) => {
+    try {
+        const { loanId } = req.params
+        const { page, limit } = req.query
+
+        const { pageNum, limitNum, skip, getMeta } = paginate({}, page, limit)
+
+        const [payments, total] = await Promise.all([
+            Payment.find({ loanId }).sort({ paidDate: 1 }).skip(skip).limit(limitNum),
+            Payment.countDocuments({ loanId })
+        ])
+
         res.status(200).json({
             success: true,
+            meta: getMeta(total),
             payments
         })
     }
-    catch(err){
+    catch (err) {
         res.status(500).json({
             success: false,
-            message: `Failed to get payment details for this loan`
+            message: `Failed to get payment details for this loan: ${err.message}`
         })
     }
 }
+
+
+// const getPaymentsByLoan = async (req,res) => {
+//     try{
+//         const {loanId} = req.params
+//         const payments = await Payment.find({loan: loanId}).sort({paymentDate: 1})
+        
+//         res.status(200).json({
+//             success: true,
+//             payments
+//         })
+//     }
+//     catch(err){
+//         res.status(500).json({
+//             success: false,
+//             message: `Failed to get payment details for this loan`
+//         })
+//     }
+// }
 
 
 const getLoanSummary = async (req,res) => {
