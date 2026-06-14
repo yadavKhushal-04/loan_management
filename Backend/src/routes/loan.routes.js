@@ -2,6 +2,7 @@ import express from "express"
 
 import {
     createLoan,
+    deleteLoan,
     getLoansByBorrower,
     updateLoanWitness,
     updateLoanStatus
@@ -23,5 +24,7 @@ router.route('/:borrowerId')
 router.route('/:loanId/witness').patch(authenticateUser, requireRole('admin'), updateLoanWitness)
 
 router.route('/:loanId/status').patch(authenticateUser, requireRole('admin'), updateLoanStatus)
+
+router.route('/:loanId').delete(authenticateUser, requireRole('admin'), deleteLoan)
 
 export default router

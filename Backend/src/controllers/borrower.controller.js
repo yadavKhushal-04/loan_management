@@ -1,6 +1,7 @@
 import {Borrower} from "../models/borrower.model.js"
 import {Loan} from "../models/loan.model.js"
 import {Payment} from "../models/payment.model.js"
+import paginate from "../utils/paginate.js"
 
 const createBorrower = async (req,res) => {
     try{
@@ -21,47 +22,133 @@ const createBorrower = async (req,res) => {
     }
 }
 
-const addLoanToBorrower = async (req,res) => {
-    try{
-        const {id} = req.params
-        const borrower = await Borrower.findById(id)
 
-        if(!borrower){
-            return res.status(404).json({
+const updateBorrower = async (req, res) => {
+    try {
+        const { id } = req.params
+        const { name, phone, address } = req.body
+
+        if (!name && !phone && !address) {
+            return res.status(400).json({
                 success: false,
-                message: `Borrower not found...`
+                message: `Provide at least one field to update`
             })
         }
 
-        const newLoan = new Loan({...req.body, borrower: id})
-        await newLoan.save()
+        const updates = {}
+        if (name) updates.name = name
+        if (phone) updates.phone = phone
+        if (address) updates.address = address
 
-        borrower.loans.push(newLoan._id)
-        await borrower.save()
+        const borrower = await Borrower.findByIdAndUpdate(
+            id,
+            updates,
+            { new: true, runValidators: true }
+        )
 
-        res.status(201).json({
+        if (!borrower) {
+            return res.status(404).json({
+                success: false,
+                message: `Borrower not found`
+            })
+        }
+
+        res.status(200).json({
             success: true,
-            message: `Loan added succesfully!!`
+            message: `Borrower updated successfully`,
+            borrower
         })
     }
-    catch(err){
-        res.status(400).json({
+    catch (err) {
+        res.status(500).json({
             success: false,
-            message: `Failed to add loan to borrower, ${err.message}`
+            message: `Failed to update borrower: ${err.message}`
         })
     }
 }
 
 
-const getAllBorrowers = async (req,res) => {
-
+const deleteBorrower = async (req, res) => {
     try {
-        const { search, status } = req.query
+        const { id } = req.params
+
+        const borrower = await Borrower.findById(id)
+        if (!borrower) {
+            return res.status(404).json({
+                success: false,
+                message: `Borrower not found`
+            })
+        }
+
+        // all loans of this borrower
+        const loans = await Loan.find({ borrowerId: id })
+        const loanIds = loans.map(loan => loan._id)
+
+        // deleting all payments for those loans
+        await Payment.deleteMany({ loanId: { $in: loanIds } })
+
+        // deleting all loans
+        await Loan.deleteMany({ borrowerId: id })
+
+        // deleted borrower
+        await Borrower.findByIdAndDelete(id)
+
+        res.status(200).json({
+            success: true,
+            message: `Borrower and all associated loans and payments deleted successfully`
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: `Failed to delete borrower: ${err.message}`
+        })
+    }
+}
+
+// was using the same logic in loan.controller.js,so removed it from here to avoid code duplication. Loan creation should be handled in loan.controller.js, and borrower.controller.js should only manage borrower-related operations.
+
+// const addLoanToBorrower = async (req,res) => {
+//     try{
+//         const {id} = req.params
+//         const borrower = await Borrower.findById(id)
+
+//         if(!borrower){
+//             return res.status(404).json({
+//                 success: false,
+//                 message: `Borrower not found...`
+//             })
+//         }
+
+//         const newLoan = new Loan({...req.body, borrower: id})
+//         await newLoan.save()
+
+//         borrower.loans.push(newLoan._id)
+//         await borrower.save()
+
+//         res.status(201).json({
+//             success: true,
+//             message: `Loan added succesfully!!`
+//         })
+//     }
+//     catch(err){
+//         res.status(400).json({
+//             success: false,
+//             message: `Failed to add loan to borrower, ${err.message}`
+//         })
+//     }
+// }
+
+
+
+const getAllBorrowers = async (req, res) => {
+    try {
+        const { search, status, page, limit } = req.query
 
         const filter = {}
 
         if (search) {
-            filter.name = { $regex: search, $options: 'i' }  // case-insensitive
+            filter.name = { $regex: search, $options: 'i' }
         }
 
         if (status) {
@@ -75,11 +162,16 @@ const getAllBorrowers = async (req,res) => {
             filter.status = status
         }
 
-        const borrowers = await Borrower.find(filter).populate('loans')
+        const { pageNum, limitNum, skip, getMeta } = paginate({}, page, limit)
+
+        const [borrowers, total] = await Promise.all([
+            Borrower.find(filter).populate('loans').skip(skip).limit(limitNum),
+            Borrower.countDocuments(filter)
+        ])
 
         res.status(200).json({
             success: true,
-            count: borrowers.length,
+            meta: getMeta(total),
             borrowers
         })
     }
@@ -89,10 +181,51 @@ const getAllBorrowers = async (req,res) => {
             message: `Failed to get borrowers: ${err.message}`
         })
     }
-
-    // const borrowers = await Borrower.find().populate('loans')
-    // res.json(borrowers)
 }
+
+
+
+
+// const getAllBorrowers = async (req,res) => {
+
+//     try {
+//         const { search, status } = req.query
+
+//         const filter = {}
+
+//         if (search) {
+//             filter.name = { $regex: search, $options: 'i' }  // case-insensitive
+//         }
+
+//         if (status) {
+//             const validStatuses = ["active", "defaulter", "cleared"]
+//             if (!validStatuses.includes(status)) {
+//                 return res.status(400).json({
+//                     success: false,
+//                     message: `Invalid status. Must be one of: ${validStatuses.join(", ")}`
+//                 })
+//             }
+//             filter.status = status
+//         }
+
+//         const borrowers = await Borrower.find(filter).populate('loans')
+
+//         res.status(200).json({
+//             success: true,
+//             count: borrowers.length,
+//             borrowers
+//         })
+//     }
+//     catch (err) {
+//         res.status(500).json({
+//             success: false,
+//             message: `Failed to get borrowers: ${err.message}`
+//         })
+//     }
+
+//     // const borrowers = await Borrower.find().populate('loans')
+//     // res.json(borrowers)
+// }
 
 
 const getBorrowerById = async (req,res) => {
@@ -186,4 +319,4 @@ const updateBorrowerStatus = async (req, res) => {
 }
 
 
-export {createBorrower, addLoanToBorrower ,getAllBorrowers, getBorrowerById, getOverdueBorrowers, updateBorrowerStatus}
+export {createBorrower ,updateBorrower, deleteBorrower, getAllBorrowers, getBorrowerById, getOverdueBorrowers, updateBorrowerStatus}

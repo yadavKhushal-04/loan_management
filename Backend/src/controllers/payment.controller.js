@@ -56,6 +56,40 @@ const addPayment = async (req,res) => {
 }
 
 
+const deletePayment = async (req, res) => {
+    try {
+        const { paymentId } = req.params
+
+        const payment = await Payment.findById(paymentId)
+        if (!payment) {
+            return res.status(404).json({
+                success: false,
+                message: `Payment not found`
+            })
+        }
+
+        // remove payment reference from the loan
+        await Loan.findByIdAndUpdate(
+            payment.loanId,
+            { $pull: { payments: payment._id } }
+        )
+
+        await Payment.findByIdAndDelete(paymentId)
+
+        res.status(200).json({
+            success: true,
+            message: `Payment deleted successfully`
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: `Failed to delete payment: ${err.message}`
+        })
+    }
+}
+
+
 const getPaymentsByLoan = async (req, res) => {
     try {
         const { loanId } = req.params
@@ -140,4 +174,4 @@ const getLoanSummary = async (req,res) => {
 
 // asyncHandler(addPayment)
 
-export {addPayment, getPaymentsByLoan, getLoanSummary}
+export {addPayment, deletePayment, getPaymentsByLoan, getLoanSummary}

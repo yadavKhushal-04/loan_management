@@ -20,7 +20,7 @@ This monorepo manages a loan tracking system with a Node.js/Express backend and 
   - Start: `npm start` (uses nodemon, loads `.env`)
   - Main server: `src/index.js` → `src/app.js`
   - MongoDB connection: `src/DB/index.js`
-  - API endpoints: `/api/auth`, `/api/borrowers`, `/api/loans`, `/api/payments`
+  - API endpoints: `/api/auth`, `/api/borrowers`, `/api/loans`, `/api/payments`, `/api/stats`
   - Environment variables: `.env` (see `dotenv` usage)
 - **Frontend**
   - Start: `npm start` (CRA default)
@@ -35,7 +35,7 @@ This monorepo manages a loan tracking system with a Node.js/Express backend and 
 - **.env required**: Backend expects environment variables for DB and CORS.
 
 ## Integration Points
-- **Frontend ↔ Backend**: Communicate via REST API endpoints (see `frontend/src/services/api.js`).
+- **Frontend ↔ Backend**: Communicating via REST API endpoints (see `frontend/src/services/api.js`).
 - **MongoDB**: All persistent data via Mongoose models.
 
 ## Examples

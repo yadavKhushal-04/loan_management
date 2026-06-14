@@ -1,5 +1,6 @@
 import {Loan} from "../models/loan.model.js"
 import {Borrower} from "../models/borrower.model.js"
+import {Payment} from "../models/payment.model.js"
 
 const createLoan = async (req,res) => {
     try{
@@ -37,6 +38,44 @@ const createLoan = async (req,res) => {
         })
     }
 }
+
+
+const deleteLoan = async (req, res) => {
+    try {
+        const { loanId } = req.params
+
+        const loan = await Loan.findById(loanId)
+        if (!loan) {
+            return res.status(404).json({
+                success: false,
+                message: `Loan not found`
+            })
+        }
+
+        // delete all payments for this loan
+        await Payment.deleteMany({ loanId })
+
+        // remove loan reference from borrower
+        await Borrower.findByIdAndUpdate(
+            loan.borrowerId,
+            { $pull: { loans: loan._id } }
+        )
+
+        await Loan.findByIdAndDelete(loanId)
+
+        res.status(200).json({
+            success: true,
+            message: `Loan and all associated payments deleted successfully`
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: `Failed to delete loan: ${err.message}`
+        })
+    }
+}
+
 
 
 const getLoansByBorrower = async (req, res) => {
@@ -221,4 +260,4 @@ const updateLoanStatus = async (req, res) => {
 }
 
 
-export {createLoan, getLoansByBorrower, updateLoanWitness, updateLoanStatus}
+export {createLoan, deleteLoan, getLoansByBorrower, updateLoanWitness, updateLoanStatus}
