@@ -24,7 +24,7 @@ const userSchema = new schema(
         },
         refreshToken: {
             tupe: String,
-            default: null
+            // default: null
         },
         createdAt: {
             type: Date,

@@ -17,7 +17,7 @@ const borrowerSchema = new schema(
             type: String,
         },
         loans: {
-            type: Schema.Types.ObjectId,
+            type: schema.Types.ObjectId,
             ref: "Loan"
         },
         status: {
