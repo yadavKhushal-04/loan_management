@@ -8,6 +8,9 @@ import {
     updateMe
 } from "../controllers/auth.controller.js"
 
+import { authenticateUser } from "../middlewares/auth.middleware.js"
+import { updateMeValidator } from "../middlewares/validator.js"
+
 const router = express.Router()
 
 
@@ -16,6 +19,6 @@ router.post('/login', loginUser)
 router.post('/refresh', refreshAccessToken)
 router.post('/logout', authenticateUser, logoutUser)
 router.get('/me', authenticateUser, getMe)
-router.patch('/me', authenticateUser, updateMe)
+router.patch('/me', authenticateUser, updateMeValidator, updateMe)
 
 export default router

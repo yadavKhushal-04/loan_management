@@ -9,11 +9,12 @@ export const authenticateUser = (req, res, next) => {
 
   const token = authHeader.split(' ')[1];
 
-  try {
+  try{
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     req.user = decoded; // attach user payload to request
     next();
-  } catch (err) {
+  }
+  catch(err){
     return res.status(401).json({ success: false, message: 'Invalid or expired token' });
   }
 };
