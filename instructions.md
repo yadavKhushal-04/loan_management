@@ -23,7 +23,7 @@ This monorepo manages a loan tracking system with a Node.js/Express backend and 
   - API endpoints: `/api/auth`, `/api/borrowers`, `/api/loans`, `/api/payments`, `/api/stats`
   - Environment variables: `.env` (see `dotenv` usage)
 - **Frontend**
-  - Start: `npm start` (CRA default)
+  - Start: `npm start`
   - Build: `npm run build`
   - Test: `npm test`
 
@@ -47,5 +47,5 @@ This monorepo manages a loan tracking system with a Node.js/Express backend and 
 - [Model Link](https://app.eraser.io/workspace/NhjAdZjnNcX0dJGYKf3J)
 
 
-# ~~Valar Morghulis~~
+## Valar Morghulis
 ---
