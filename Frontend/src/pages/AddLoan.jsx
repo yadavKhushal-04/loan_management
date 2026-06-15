@@ -13,7 +13,11 @@ const AddLoan = () => {
         principalAmount: "",
         interestRate: "",
         durationMonths: "",
-        witness: ""
+        witness: {
+            name: "",
+            phone: "",
+            adress: ""
+        }
     })
     const [loading, setLoading] = useState(false)
 
@@ -33,7 +37,13 @@ const AddLoan = () => {
     }, [id])
 
     const handleChange = (e) => {
-        setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+        const { name, value } = e.target
+        if (name.startsWith('witness.')) {
+            const field = name.split('.')[1]
+            setForm(prev => ({...prev, witness: { ...prev.witness, [field]: value }}))
+        } else {
+            setForm(prev => ({ ...prev, [name]: value }))
+        }
     }
 
     const handleSubmit = async (e) => {
@@ -50,7 +60,8 @@ const AddLoan = () => {
                 principalAmount: Number(form.principalAmount),
                 interestRate: Number(form.interestRate),
                 durationMonths: Number(form.durationMonths),
-                witness: form.witness || undefined
+                // only send witness if name is filled
+                witness: form.witness.name ? form.witness : undefined
             })
 
             toast.success('Loan added successfully')
@@ -143,7 +154,7 @@ const AddLoan = () => {
                             </div>
                         </div>
 
-                        <div>
+                        {/* <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Witness
                                 <span className="text-gray-400 text-xs ml-1">(optional)</span>
@@ -156,6 +167,53 @@ const AddLoan = () => {
                                 placeholder="Enter witness name"
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
+                        </div> */}
+                        <div className="border-t border-gray-100 pt-4 mt-1">
+                            <p className="text-sm font-medium text-gray-700 mb-3">
+                                Witness Details
+                                <span className="text-gray-400 text-xs ml-1">(optional)</span>
+                            </p>
+
+                            <div className="flex flex-col gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="witness.name"
+                                        value={form.witness.name}
+                                        onChange={handleChange}
+                                        placeholder="Witness name"
+                                        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring"/>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Phone
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="witness.phone"
+                                        value={form.witness.phone}
+                                        onChange={handleChange}
+                                        placeholder="Witness phone number"
+                                        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Address
+                                    </label>
+                                    <textarea
+                                        name="witness.address"
+                                        value={form.witness.address}
+                                        onChange={handleChange}
+                                        placeholder="Witness address"
+                                        rows={2}
+                                        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"/>
+                                </div>
+                            </div>
                         </div>
 
                         {/* summary preview */}
@@ -166,8 +224,8 @@ const AddLoan = () => {
                                 <p>Total Interest: <span className="font-medium">
                                     ₹{(Number(form.principalAmount) * Number(form.interestRate) / 100 * Number(form.durationMonths) / 12).toLocaleString(undefined, { maximumFractionDigits: 2 })}
                                 </span></p>
-                                <p>Monthly Payment: <span className="font-medium">
-                                    ₹{(Number(form.principalAmount) / Number(form.durationMonths)).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                <p>EMI: <span className="font-medium">
+                                    ₹{((Number(form.principalAmount) + (Number(form.principalAmount) * Number(form.interestRate) / 100 * Number(form.durationMonths) / 12)) / Number(form.durationMonths)).toLocaleString(undefined, { maximumFractionDigits: 2 })}
                                 </span></p>
                             </div>
                         )}

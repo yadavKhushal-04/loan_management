@@ -30,16 +30,29 @@ const registerValidator = [
 ];
 
 const createLoanValidator = [
-  body('principalAmount').isNumeric(),
-  body('interestRate').isNumeric(),
-  body('emiAmount').isNumeric(),
-  body('totalMonths').isInt({ min: 1 }),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
-    next();
-  }
-];
+    body('principalAmount')
+        .notEmpty().withMessage('Principal amount is required')
+        .isNumeric().withMessage('Principal amount must be a number')
+        .custom(val => val > 0).withMessage('Principal amount must be greater than 0'),
+    body('interestRate')
+        .notEmpty().withMessage('Interest rate is required')
+        .isNumeric().withMessage('Interest rate must be a number'),
+    body('durationMonths')
+        .notEmpty().withMessage('Duration is required')
+        .isInt({ min: 1 }).withMessage('Duration must be at least 1 month'),
+    body('witness.name')
+        .optional()
+        .isString().withMessage('Witness name must be a string')
+        .trim(),
+    body('witness.phone')
+        .optional()
+        .isMobilePhone().withMessage('Witness phone must be a valid number'),
+    body('witness.address')
+        .optional()
+        .isString().withMessage('Witness address must be a string')
+        .trim(),
+    validate
+]
 
 const addPaymentValidator = [
   body('amount').isNumeric(),

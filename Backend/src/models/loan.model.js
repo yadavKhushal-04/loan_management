@@ -29,7 +29,7 @@ const loanSchema = new schema(
         },
         startDate: {
             type: Date,
-            required: true
+            default: Date.now
         },
         status: {
             type: String,

@@ -16,10 +16,10 @@ const borrowerSchema = new schema(
         address: {
             type: String,
         },
-        loans: {
+        loans: [{
             type: schema.Types.ObjectId,
             ref: "Loan"
-        },
+        }],
         status: {
             type: String,
             enum: ["active", "defaulter", "cleared"],

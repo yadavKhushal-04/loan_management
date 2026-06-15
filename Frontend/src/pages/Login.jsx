@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useState , useEffect} from "react"
+import { useNavigate, Link } from "react-router-dom"
 import { useAuthStore } from "../store/authStore"
 import api from "../api/axios"
 import toast from "react-hot-toast"
@@ -12,9 +12,11 @@ const Login = () => {
     const [loading, setLoading] = useState(false)
 
     // if already logged in, redirect to dashboard
-    if (isAuthenticated) {
-        navigate('/dashboard')
-    }
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/dashboard')
+        }
+    }, [isAuthenticated])
 
     const handleChange = (e) => {
         setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -95,6 +97,13 @@ const Login = () => {
                     >
                         {loading ? 'Signing in...' : 'Sign In'}
                     </button>
+
+                    <p className="text-center text-sm text-gray-500">
+                        Don't have an account?{' '}
+                        <Link to="/register" className="text-blue-600 hover:underline font-medium">
+                            Register
+                        </Link>
+                    </p>
                 </form>
             </div>
         </div>

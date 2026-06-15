@@ -237,7 +237,10 @@ const getBorrowerById = async (req,res) => {
         })
     }
 
-    res.json(borrower)
+    res.status(200).json({
+        success: true,
+        borrower: borrower
+    })
 }
 
 const getOverdueBorrowers = async (req, res) => {

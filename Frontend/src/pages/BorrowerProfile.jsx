@@ -6,6 +6,7 @@ import Loader from "../components/Loader"
 import { useAuthStore } from "../store/authStore"
 import toast from "react-hot-toast"
 
+
 const statusColors = {
     active: "bg-green-100 text-green-700 border-green-200",
     defaulter: "bg-red-100 text-red-700 border-red-200",
@@ -31,12 +32,15 @@ const BorrowerProfile = () => {
         const fetchData = async () => {
             try {
                 const { data: borrowerData } = await api.get(`/borrowers/${id}`)
+                // console.log('borrower response:', borrowerData) //temporarily added for debugging
                 setBorrower(borrowerData.borrower)
 
                 const { data: loanData } = await api.get(`/loans/${id}?status=active`)
+                // console.log('loan response:', loanData) //temporarily added for debugging
                 setActiveLoan(loanData.loans[0] || null)
             }
             catch (err) {
+                // console.log('error:', err) //temporarily added for debugging
                 toast.error(err.response?.data?.message || 'Failed to load borrower')
                 navigate('/borrowers')
             }
@@ -48,7 +52,7 @@ const BorrowerProfile = () => {
         fetchData()
     }, [id])
 
-    if (loading) return (
+    if (loading || !borrower) return (
         <div className="min-h-screen bg-gray-50">
             <Navbar />
             <Loader />
@@ -132,6 +136,19 @@ const BorrowerProfile = () => {
                         )}
                     </div>
 
+                    {/* to add Payment Button*/}
+                    {user?.role === 'admin' && (
+                        <div className="col-span-2 pt-2">
+                            <button
+                                onClick={() => navigate(`/borrowers/${id}/add-payment/${activeLoan._id}`)}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
+                            >
+                                + Record Payment
+                            </button>
+                        </div>
+                    )}
+   
+
                     {!activeLoan ? (
                         <div className="bg-white rounded-xl shadow p-6 text-center text-gray-400 text-sm">
                             No active loan for this borrower
@@ -172,11 +189,27 @@ const BorrowerProfile = () => {
                                         {activeLoan.payments?.length || 0} / {activeLoan.durationMonths}
                                     </p>
                                 </div>
-                                <div>
+                                {/* <div>
                                     <p className="text-xs text-gray-400 uppercase font-medium">Witness</p>
                                     <p className="text-gray-800 font-semibold mt-1">
                                         {activeLoan.witness || '—'}
                                     </p>
+                                </div> */}
+                                <div>
+                                    <p className="text-xs text-gray-400 uppercase font-medium">Witness</p>
+                                    {activeLoan.witness?.name ? (
+                                        <div className="mt-1">
+                                            <p className="text-gray-800 font-semibold">{activeLoan.witness.name}</p>
+                                            {activeLoan.witness.phone && (
+                                                <p className="text-gray-500 text-sm">{activeLoan.witness.phone}</p>
+                                            )}
+                                            {activeLoan.witness.address && (
+                                                <p className="text-gray-500 text-sm">{activeLoan.witness.address}</p>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <p className="text-gray-800 font-semibold mt-1">—</p>
+                                    )}
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-400 uppercase font-medium">Started</p>
