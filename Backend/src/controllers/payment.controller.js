@@ -38,7 +38,7 @@ const addPayment = async (req,res) => {
             amount,
             paidDate: paidDate || new Date(),
             monthFor,
-            // method,
+            method,
             note
         })
     

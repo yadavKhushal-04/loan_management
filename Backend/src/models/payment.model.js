@@ -26,7 +26,8 @@ const paymentSchema = new schema(
             default: "cash"
         },
         note: {
-            type: String
+            type: String,
+            default: null
         }
     }
 )

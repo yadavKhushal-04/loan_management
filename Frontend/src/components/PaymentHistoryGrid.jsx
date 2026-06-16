@@ -81,7 +81,14 @@ const PaymentHistoryGrid = ({ loan }) => {
                             <p className="font-bold text-sm">{statusIcons[status]}</p>
                             <p className="mt-0.5">{label}</p>
                             {payment && (
-                                <p className="mt-0.5 font-medium">₹{payment.amount.toLocaleString()}</p>
+                                <>
+                                    <p className="mt-0.5 font-medium">₹{payment.amount.toLocaleString()}</p>
+                                    <p className="mt-0.5 text-xs opacity-70">
+                                        {new Date(payment.paidDate).toLocaleDateString('en-IN', {
+                                            day: 'numeric', month: 'short'
+                                    })}
+                                    </p>
+                                </>
                             )}
                         </div>
                     )

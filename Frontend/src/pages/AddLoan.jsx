@@ -13,6 +13,7 @@ const AddLoan = () => {
         principalAmount: "",
         interestRate: "",
         durationMonths: "",
+        startDate: new Date().toISOString().split('T')[0],
         witness: {
             name: "",
             phone: "",
@@ -60,6 +61,7 @@ const AddLoan = () => {
                 principalAmount: Number(form.principalAmount),
                 interestRate: Number(form.interestRate),
                 durationMonths: Number(form.durationMonths),
+                startDate: form.startDate,
                 // only send witness if name is filled
                 witness: form.witness.name ? form.witness : undefined
             })
@@ -152,6 +154,20 @@ const AddLoan = () => {
                                 />
                                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">months</span>
                             </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Loan Start Date <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="date"
+                                name="startDate"
+                                value={form.startDate}
+                                onChange={handleChange}
+                                max={new Date().toISOString().split('T')[0]}
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
                         </div>
 
                         {/* <div>

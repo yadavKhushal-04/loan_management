@@ -9,7 +9,8 @@ const createLoan = async (req, res) => {
             principalAmount,
             interestRate,
             durationMonths,
-            witness
+            witness,
+            startDate
         } = req.body
 
         // calculate totalAmount and emiAmount
@@ -24,6 +25,7 @@ const createLoan = async (req, res) => {
             durationMonths,
             totalAmount,
             emiAmount,
+            stratDate: startDate || new Date(),
             witness: witness?.name ? witness : null
         })
 
