@@ -7,7 +7,7 @@ import toast from "react-hot-toast"
 const AddBorrower = () => {
     const navigate = useNavigate()
 
-    const [form, setForm] = useState({ name: "", phone: "", address: "" })
+    const [form, setForm] = useState({ name: "", fatherName: "", phone: "", address: "" })
     const [loading, setLoading] = useState(false)
 
     const handleChange = (e) => {
@@ -65,6 +65,21 @@ const AddBorrower = () => {
                                 value={form.name}
                                 onChange={handleChange}
                                 placeholder="Enter borrower's name"
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Father's Name
+                                <span className="text-gray-400 text-xs ml-1">(optional)</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="fatherName"
+                                value={form.fatherName}
+                                onChange={handleChange}
+                                placeholder="Enter father's name"
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>

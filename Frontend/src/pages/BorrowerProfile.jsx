@@ -101,6 +101,11 @@ const BorrowerProfile = () => {
                             {borrower.status}
                         </span>
                     </div>
+                    
+                    <div>
+                        <p className="text-xs text-gray-400 uppercase font-medium">Father's Name</p>
+                        <p className="text-gray-800 font-medium mt-1">{borrower.fatherName || '—'}</p>
+                    </div>
                     <div className="grid grid-cols-3 gap-4 mt-6">
                         <div>
                             <p className="text-xs text-gray-400 uppercase font-medium">Phone</p>

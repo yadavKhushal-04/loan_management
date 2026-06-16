@@ -16,6 +16,10 @@ const borrowerSchema = new schema(
         address: {
             type: String,
         },
+        fatherName: {
+            type: String,
+            trim: true,
+        },
         loans: [{
             type: schema.Types.ObjectId,
             ref: "Loan"
