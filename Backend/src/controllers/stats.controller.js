@@ -1,6 +1,7 @@
 import { Borrower } from "../models/borrower.model.js"
 import { Loan } from "../models/loan.model.js"
 import { Payment } from "../models/payment.model.js"
+import { runDefaulterCheck } from "../jobs/defaulterCheck.js"
 
 const getDashboardStats = async (req, res) => {
     try {
