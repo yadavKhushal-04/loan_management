@@ -42,7 +42,7 @@ const AddPayment = () => {
                     const label = d.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
 
                     // only show months that are due and not yet paid
-                    if (key <= currentMonth && !paidMonths.has(key)) {
+                    if (!paidMonths.has(key)) {
                         months.push({ key, label })
                     }
                 }

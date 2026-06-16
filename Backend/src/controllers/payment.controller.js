@@ -34,7 +34,7 @@ const addPayment = async (req,res) => {
         }
     
         const payment = new Payment({
-            loan: loanId,
+            loanId,
             amount,
             paidDate: paidDate || new Date(),
             monthFor,
