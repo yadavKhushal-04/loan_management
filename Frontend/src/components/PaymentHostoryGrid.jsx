@@ -74,7 +74,7 @@ const PaymentHistoryGrid = ({ loan }) => {
                             key={key}
                             className={`rounded-lg p-2.5 text-center text-xs ${statusStyles[status]}`}
                             title={payment
-                                ? `Paid ₹${payment.amount} on ${new Date(payment.paidDate).toLocaleDateString('en-IN')}`
+                                ? `Paid ₹${payment.amount} on ${new Date(payment.paidDate).toLocaleDateString('en-IN')} via ${payment.method?.toUpperCase()}`
                                 : status === 'missed' ? 'No payment recorded' : 'Not due yet'
                             }
                         >

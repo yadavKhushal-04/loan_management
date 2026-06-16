@@ -21,6 +21,9 @@ const paymentSchema = new schema(
         },
         method: {
             type: String,
+            enum: ["cash", "upi"],
+            required: true,
+            default: "cash"
         },
         note: {
             type: String

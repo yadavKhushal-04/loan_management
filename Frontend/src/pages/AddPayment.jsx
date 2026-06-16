@@ -13,7 +13,8 @@ const AddPayment = () => {
     const [form, setForm] = useState({
         amount: "",
         monthFor: "",
-        paidDate: new Date().toISOString().split('T')[0]
+        paidDate: new Date().toISOString().split('T')[0],
+        method: "cash"
     })
     const [loading, setLoading] = useState(false)
 
@@ -82,7 +83,8 @@ const AddPayment = () => {
             await api.post(`/payments/${loanId}`, {
                 amount: Number(form.amount),
                 monthFor: form.monthFor,
-                paidDate: form.paidDate
+                paidDate: form.paidDate,
+                method: form.method
             })
 
             toast.success('Payment recorded successfully')
@@ -202,6 +204,36 @@ const AddPayment = () => {
                                         EMI amount: ₹{loan.emiAmount?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                                     </p>
                                 )}
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Payment Method <span className="text-red-500">*</span>
+                                </label>
+                                <div className="flex gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setForm(prev => ({ ...prev, method: 'cash' }))}
+                                        className={`flex-1 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
+                                            form.method === 'cash'
+                                                ? 'bg-blue-600 text-white border-blue-600'
+                                                : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                                        }`}
+                                    >
+                                        💵 Cash
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setForm(prev => ({ ...prev, method: 'upi' }))}
+                                        className={`flex-1 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
+                                            form.method === 'upi'
+                                                ? 'bg-blue-600 text-white border-blue-600'
+                                                : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                                        }`}
+                                    >
+                                        📱 UPI
+                                    </button>
+                                </div>
                             </div>
 
                             {/* paid date */}

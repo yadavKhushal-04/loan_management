@@ -65,6 +65,9 @@ const addPaymentValidator = [
     body('monthFor')
         .notEmpty().withMessage('Month is required')
         .matches(/^\d{4}-(0[1-9]|1[0-2])$/).withMessage('monthFor must be in YYYY-MM format'),
+    body('method')
+        .notEmpty().withMessage('Payment method is required')
+        .isIn(['cash', 'upi']).withMessage('Method must be either cash or upi'),
     validate
 ]
 
