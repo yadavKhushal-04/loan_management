@@ -55,13 +55,18 @@ const createLoanValidator = [
 ]
 
 const addPaymentValidator = [
-  body('amount').isNumeric(),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
-    next();
-  }
-];
+    body('amount')
+        .notEmpty().withMessage('Amount is required')
+        .isNumeric().withMessage('Amount must be a number')
+        .custom(val => val > 0).withMessage('Amount must be greater than 0'),
+    body('paidDate')
+        .notEmpty().withMessage('Payment date is required')
+        .isISO8601().withMessage('Payment date must be a valid date'),
+    body('monthFor')
+        .notEmpty().withMessage('Month is required')
+        .matches(/^\d{4}-(0[1-9]|1[0-2])$/).withMessage('monthFor must be in YYYY-MM format'),
+    validate
+]
 
 
 const createBorrowerValidator = [

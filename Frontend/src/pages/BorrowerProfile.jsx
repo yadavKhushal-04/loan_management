@@ -3,18 +3,18 @@ import { useParams, useNavigate } from "react-router-dom"
 import api from "../api/axios"
 import Navbar from "../components/Navbar"
 import Loader from "../components/Loader"
+import PaymentHistoryGrid from "../components/PaymentHistoryGrid"
 import { useAuthStore } from "../store/authStore"
 import toast from "react-hot-toast"
 
-
 const statusColors = {
-    active: "bg-green-100 text-green-700 border-green-200",
+    active:   "bg-green-100 text-green-700 border-green-200",
     defaulter: "bg-red-100 text-red-700 border-red-200",
-    cleared: "bg-yellow-100 text-yellow-700 border-yellow-200"
+    cleared:  "bg-yellow-100 text-yellow-700 border-yellow-200"
 }
 
 const loanStatusColors = {
-    active: "bg-green-100 text-green-700",
+    active:    "bg-green-100 text-green-700",
     completed: "bg-yellow-100 text-yellow-700",
     defaulter: "bg-red-100 text-red-700"
 }
@@ -22,25 +22,29 @@ const loanStatusColors = {
 const BorrowerProfile = () => {
     const { id } = useParams()
     const navigate = useNavigate()
-    const { user } = useAuthStore()  // to check if user is admin
+    const { user } = useAuthStore()
 
     const [borrower, setBorrower] = useState(null)
     const [activeLoan, setActiveLoan] = useState(null)
+    const [previousLoans, setPreviousLoans] = useState([])
     const [loading, setLoading] = useState(true)
+    const [expandedLoan, setExpandedLoan] = useState(null)  // for toggling previous loan history
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const { data: borrowerData } = await api.get(`/borrowers/${id}`)
-                // console.log('borrower response:', borrowerData) //temporarily added for debugging
                 setBorrower(borrowerData.borrower)
 
-                const { data: loanData } = await api.get(`/loans/${id}?status=active`)
-                // console.log('loan response:', loanData) //temporarily added for debugging
-                setActiveLoan(loanData.loans[0] || null)
+                // fetch all loans, not just active
+                const { data: loanData } = await api.get(`/loans/${id}`)
+                const active = loanData.loans.find(l => l.status === 'active')
+                const previous = loanData.loans.filter(l => l.status !== 'active')
+
+                setActiveLoan(active || null)
+                setPreviousLoans(previous)
             }
             catch (err) {
-                // console.log('error:', err) //temporarily added for debugging
                 toast.error(err.response?.data?.message || 'Failed to load borrower')
                 navigate('/borrowers')
             }
@@ -48,7 +52,6 @@ const BorrowerProfile = () => {
                 setLoading(false)
             }
         }
-
         fetchData()
     }, [id])
 
@@ -65,7 +68,6 @@ const BorrowerProfile = () => {
 
             <div className="max-w-3xl mx-auto px-6 py-10">
 
-                {/* back button */}
                 <button
                     onClick={() => navigate('/borrowers')}
                     className="text-sm text-gray-500 hover:text-gray-700 mb-6 flex items-center gap-1 transition-colors"
@@ -73,7 +75,7 @@ const BorrowerProfile = () => {
                     ← Back to Borrowers
                 </button>
 
-                {/* defaulter alert banner */}
+                {/* defaulter alert */}
                 {borrower.status === "defaulter" && (
                     <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-5 py-4 mb-6 flex items-center gap-3">
                         <span className="text-xl">⚠️</span>
@@ -84,13 +86,11 @@ const BorrowerProfile = () => {
                     </div>
                 )}
 
-                {/* borrower details card */}
+                {/* borrower details */}
                 <div className="bg-white rounded-xl shadow p-6 mb-6">
                     <div className="flex items-start justify-between">
                         <div>
-                            <h2 className="text-2xl font-bold text-gray-800 capitalize">
-                                {borrower.name}
-                            </h2>
+                            <h2 className="text-2xl font-bold text-gray-800 capitalize">{borrower.name}</h2>
                             <p className="text-gray-500 text-sm mt-1">
                                 Member since {new Date(borrower.createdAt).toLocaleDateString('en-IN', {
                                     year: 'numeric', month: 'long', day: 'numeric'
@@ -101,8 +101,7 @@ const BorrowerProfile = () => {
                             {borrower.status}
                         </span>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-4 mt-6">
+                    <div className="grid grid-cols-3 gap-4 mt-6">
                         <div>
                             <p className="text-xs text-gray-400 uppercase font-medium">Phone</p>
                             <p className="text-gray-800 font-medium mt-1">{borrower.phone}</p>
@@ -118,14 +117,10 @@ const BorrowerProfile = () => {
                     </div>
                 </div>
 
-                {/* active loan section */}
-                <div>
+                {/* active loan */}
+                <div className="mb-8">
                     <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                            Current Loan
-                        </h3>
-
-                        {/* only show Add Loan button to admins when no active loan exists */}
+                        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Current Loan</h3>
                         {!activeLoan && user?.role === 'admin' && (
                             <button
                                 onClick={() => navigate(`/borrowers/${id}/add-loan`)}
@@ -136,19 +131,6 @@ const BorrowerProfile = () => {
                         )}
                     </div>
 
-                    {/* to add Payment Button*/}
-                    {user?.role === 'admin' && (
-                        <div className="col-span-2 pt-2">
-                            <button
-                                onClick={() => navigate(`/borrowers/${id}/add-payment/${activeLoan._id}`)}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
-                            >
-                                + Record Payment
-                            </button>
-                        </div>
-                    )}
-   
-
                     {!activeLoan ? (
                         <div className="bg-white rounded-xl shadow p-6 text-center text-gray-400 text-sm">
                             No active loan for this borrower
@@ -156,7 +138,7 @@ const BorrowerProfile = () => {
                     ) : (
                         <div className="bg-white rounded-xl shadow p-6">
                             <div className="flex items-center justify-between mb-5">
-                                <p className="text-xs text-gray-400 uppercase font-medium">
+                                <p className="text-xs text-gray-400 font-medium">
                                     Loan ID: <span className="text-gray-600">{activeLoan._id}</span>
                                 </p>
                                 <span className={`text-xs font-semibold px-3 py-1 rounded-full capitalize ${loanStatusColors[activeLoan.status]}`}>
@@ -164,52 +146,26 @@ const BorrowerProfile = () => {
                                 </span>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-5">
+                            <div className="grid grid-cols-2 gap-5 mb-6">
                                 <div>
                                     <p className="text-xs text-gray-400 uppercase font-medium">Principal Amount</p>
-                                    <p className="text-gray-800 font-semibold text-lg mt-1">
-                                        ₹{activeLoan.principalAmount?.toLocaleString()}
-                                    </p>
+                                    <p className="text-gray-800 font-semibold text-lg mt-1">₹{activeLoan.principalAmount?.toLocaleString()}</p>
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-400 uppercase font-medium">Interest Rate</p>
-                                    <p className="text-gray-800 font-semibold text-lg mt-1">
-                                        {activeLoan.interestRate}%
-                                    </p>
+                                    <p className="text-gray-800 font-semibold text-lg mt-1">{activeLoan.interestRate}%</p>
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-400 uppercase font-medium">Duration</p>
-                                    <p className="text-gray-800 font-semibold mt-1">
-                                        {activeLoan.durationMonths} months
-                                    </p>
+                                    <p className="text-gray-800 font-semibold mt-1">{activeLoan.durationMonths} months</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-400 uppercase font-medium">EMI Amount</p>
+                                    <p className="text-gray-800 font-semibold mt-1">₹{activeLoan.emiAmount?.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-400 uppercase font-medium">Payments Made</p>
-                                    <p className="text-gray-800 font-semibold mt-1">
-                                        {activeLoan.payments?.length || 0} / {activeLoan.durationMonths}
-                                    </p>
-                                </div>
-                                {/* <div>
-                                    <p className="text-xs text-gray-400 uppercase font-medium">Witness</p>
-                                    <p className="text-gray-800 font-semibold mt-1">
-                                        {activeLoan.witness || '—'}
-                                    </p>
-                                </div> */}
-                                <div>
-                                    <p className="text-xs text-gray-400 uppercase font-medium">Witness</p>
-                                    {activeLoan.witness?.name ? (
-                                        <div className="mt-1">
-                                            <p className="text-gray-800 font-semibold">{activeLoan.witness.name}</p>
-                                            {activeLoan.witness.phone && (
-                                                <p className="text-gray-500 text-sm">{activeLoan.witness.phone}</p>
-                                            )}
-                                            {activeLoan.witness.address && (
-                                                <p className="text-gray-500 text-sm">{activeLoan.witness.address}</p>
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <p className="text-gray-800 font-semibold mt-1">—</p>
-                                    )}
+                                    <p className="text-gray-800 font-semibold mt-1">{activeLoan.payments?.length || 0} / {activeLoan.durationMonths}</p>
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-400 uppercase font-medium">Started</p>
@@ -219,10 +175,86 @@ const BorrowerProfile = () => {
                                         })}
                                     </p>
                                 </div>
+                                <div className="col-span-2">
+                                    <p className="text-xs text-gray-400 uppercase font-medium">Witness</p>
+                                    {activeLoan.witness?.name ? (
+                                        <div className="mt-1">
+                                            <p className="text-gray-800 font-semibold">{activeLoan.witness.name}</p>
+                                            {activeLoan.witness.phone && <p className="text-gray-500 text-sm">{activeLoan.witness.phone}</p>}
+                                            {activeLoan.witness.address && <p className="text-gray-500 text-sm">{activeLoan.witness.address}</p>}
+                                        </div>
+                                    ) : (
+                                        <p className="text-gray-800 font-semibold mt-1">—</p>
+                                    )}
+                                </div>
                             </div>
+
+                            {/* payment history grid */}
+                            <div className="border-t border-gray-100 pt-5">
+                                <p className="text-xs text-gray-400 uppercase font-medium mb-3">Payment History</p>
+                                <PaymentHistoryGrid loan={activeLoan} />
+                            </div>
+
+                            {/* record payment button */}
+                            {user?.role === 'admin' && (
+                                <button
+                                    onClick={() => navigate(`/borrowers/${id}/add-payment/${activeLoan._id}`)}
+                                    className="w-full mt-5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
+                                >
+                                    + Record Payment
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>
+
+                {/* previous loans */}
+                {previousLoans.length > 0 && (
+                    <div>
+                        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                            Previous Loans ({previousLoans.length})
+                        </h3>
+                        <div className="flex flex-col gap-4">
+                            {previousLoans.map(loan => (
+                                <div key={loan._id} className="bg-white rounded-xl shadow p-5">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm font-semibold text-gray-700">
+                                                ₹{loan.principalAmount?.toLocaleString()}
+                                                <span className="text-gray-400 font-normal ml-2">
+                                                    @ {loan.interestRate}% for {loan.durationMonths} months
+                                                </span>
+                                            </p>
+                                            <p className="text-xs text-gray-400 mt-0.5">
+                                                {new Date(loan.createdAt).toLocaleDateString('en-IN', {
+                                                    year: 'numeric', month: 'long'
+                                                })}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full capitalize ${loanStatusColors[loan.status]}`}>
+                                                {loan.status}
+                                            </span>
+                                            <button
+                                                onClick={() => setExpandedLoan(expandedLoan === loan._id ? null : loan._id)}
+                                                className="text-xs text-blue-600 hover:underline"
+                                            >
+                                                {expandedLoan === loan._id ? 'Hide history' : 'View history'}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* expandable payment history */}
+                                    {expandedLoan === loan._id && (
+                                        <div className="mt-4 border-t border-gray-100 pt-4">
+                                            <PaymentHistoryGrid loan={loan} />
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
             </div>
         </div>

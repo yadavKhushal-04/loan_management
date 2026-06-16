@@ -10,9 +10,9 @@ const addPayment = async (req,res) => {
         const {loanId} = req.params
         const {
             amount,
-            paymentDate,
+            paidDate,
             monthFor,
-            method,
+            // method,
             note
         } = req.body
 
@@ -24,13 +24,21 @@ const addPayment = async (req,res) => {
                 message: `Failed to find such loan`
             })
         }
+
+        const existing = await Payment.findOne({ loanId, monthFor })
+        if (existing) {
+            return res.status(400).json({
+                success: false,
+                message: `Payment for ${monthFor} has already been recorded`
+            })
+        }
     
         const payment = new Payment({
             loan: loanId,
             amount,
-            paymentDate: paymentDate || new Date(),
+            paidDate: paidDate || new Date(),
             monthFor,
-            method,
+            // method,
             note
         })
     
@@ -44,6 +52,7 @@ const addPayment = async (req,res) => {
     
         res.status(201).json({
             success: true,
+            message: "Payment updated successfully",
             payment
         })
     }
