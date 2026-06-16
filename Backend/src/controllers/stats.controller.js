@@ -5,6 +5,8 @@ import { Payment } from "../models/payment.model.js"
 const getDashboardStats = async (req, res) => {
     try {
 
+        await runDefaulterCheck()
+
         const [
             totalBorrowers,
             activeBorrowers,

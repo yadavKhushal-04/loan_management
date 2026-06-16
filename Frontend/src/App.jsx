@@ -10,6 +10,9 @@ import AddLoan from "./pages/AddLoan"
 import NotFound from "./pages/NotFound"
 import Register from "./pages/Register"
 import AddPayment from "./pages/AddPayment"
+import Defaulters from "./pages/Defaulters"
+
+
 
 function App() {
     return (
@@ -28,6 +31,12 @@ function App() {
                 <Route path="/borrowers" element={
                     <ProtectedRoute>
                         <Borrowers />
+                    </ProtectedRoute>
+                } />
+
+                <Route path="/defaulters" element={
+                    <ProtectedRoute>
+                        <Defaulters />
                     </ProtectedRoute>
                 } />
 

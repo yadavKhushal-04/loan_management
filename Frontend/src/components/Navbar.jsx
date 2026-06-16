@@ -30,15 +30,18 @@ const Navbar = () => {
                 <div className="flex gap-6">
                     <Link
                         to="/dashboard"
-                        className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                    >
+                        className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
                         Dashboard
                     </Link>
                     <Link
                         to="/borrowers"
-                        className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                    >
+                        className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
                         Borrowers
+                    </Link>
+                    <Link
+                        to="/defaulters"
+                        className="text-red-500 hover:text-red-700 font-medium transition-colors">
+                        Defaulters
                     </Link>
                 </div>
             </div>
