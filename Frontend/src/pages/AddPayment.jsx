@@ -14,7 +14,7 @@ const AddPayment = () => {
         amount: "",
         monthFor: "",
         paidDate: new Date().toISOString().split('T')[0],
-        method: "cash",
+        method: "",
         note: ""
     })
     const [loading, setLoading] = useState(false)

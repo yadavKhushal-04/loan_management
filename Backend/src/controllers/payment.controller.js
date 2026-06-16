@@ -12,7 +12,7 @@ const addPayment = async (req,res) => {
             amount,
             paidDate,
             monthFor,
-            // method,
+            method,
             note
         } = req.body
 
