@@ -57,7 +57,7 @@ const Defaulters = () => {
         <div className="min-h-screen bg-gray-50">
             <Navbar />
 
-            <div className="max-w-5xl mx-auto px-6 py-10">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
 
                 {/* header */}
                 <div className="mb-8">
@@ -164,18 +164,12 @@ const Defaulters = () => {
                                                 </div>
 
                                                 {/* right — action buttons */}
-                                                <div className="flex flex-col gap-2 flex-shrink-0">
-                                                    <button
-                                                        onClick={() => navigate(`/borrowers/${borrower._id}`)}
-                                                        className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg transition-colors font-medium"
-                                                    >
+                                                <div className="flex sm:flex-col gap-2 sm:flex-shrink-0">
+                                                    <button className="flex-1 sm:flex-none text-sm bg-blue-600 ...">
                                                         View Profile
                                                     </button>
                                                     
-                                                    <a
-                                                        href={`tel:${borrower.phone}`}
-                                                        className="text-sm border border-green-500 text-green-600 hover:bg-green-50 px-4 py-1.5 rounded-lg transition-colors font-medium text-center"
-                                                    >
+                                                    <a className="flex-1 sm:flex-none text-sm border ...">
                                                         📞 Call
                                                     </a>
                                                 </div>

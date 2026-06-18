@@ -65,7 +65,7 @@ const PaymentHistoryGrid = ({ loan }) => {
             </div>
 
             {/* month grid */}
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {months.map(({ key, label }) => {
                     const status = getStatus(key)
                     const payment = payments.find(p => p.monthFor === key)

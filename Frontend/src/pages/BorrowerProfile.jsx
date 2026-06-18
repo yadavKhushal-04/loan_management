@@ -66,7 +66,7 @@ const BorrowerProfile = () => {
         <div className="min-h-screen bg-gray-50">
             <Navbar />
 
-            <div className="max-w-3xl mx-auto px-6 py-10">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
 
                 <button
                     onClick={() => navigate('/borrowers')}
@@ -106,7 +106,7 @@ const BorrowerProfile = () => {
                         <p className="text-xs text-gray-400 uppercase font-medium">Father's Name</p>
                         <p className="text-gray-800 font-medium mt-1">{borrower.fatherName || '—'}</p>
                     </div>
-                    <div className="grid grid-cols-3 gap-4 mt-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
                         <div>
                             <p className="text-xs text-gray-400 uppercase font-medium">Phone</p>
                             <p className="text-gray-800 font-medium mt-1">{borrower.phone}</p>
@@ -151,7 +151,7 @@ const BorrowerProfile = () => {
                                 </span>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-5 mb-6">
+                            <div className="grid grid-cols-2 gap-4 sm:gap-5 mb-6">
                                 <div>
                                     <p className="text-xs text-gray-400 uppercase font-medium">Principal Amount</p>
                                     <p className="text-gray-800 font-semibold text-lg mt-1">₹{activeLoan.principalAmount?.toLocaleString()}</p>
