@@ -137,5 +137,12 @@ const updateMeValidator = [
     validate
 ]
 
+const extendLoanValidator = [
+    body('extraMonths')
+        .notEmpty().withMessage('Number of months is required')
+        .isInt({ min: 1 }).withMessage('Must extend by at least 1 month'),
+    validate
+]
 
-export {registerValidator, createLoanValidator, addPaymentValidator, createBorrowerValidator, updateBorrowerValidator, updateBorrowerStatusValidator, updateMeValidator};
+
+export {registerValidator, createLoanValidator, addPaymentValidator, createBorrowerValidator, updateBorrowerValidator, updateBorrowerStatusValidator, updateMeValidator, extendLoanValidator};

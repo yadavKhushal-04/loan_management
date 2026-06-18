@@ -89,7 +89,7 @@ const AddPayment = () => {
                 note: form.note || undefined
             })
 
-            toast.success('Payment recorded successfully')
+            toast.success(data.message)
 
             // check if more unpaid months remain
             const remaining = unpaidMonths.filter(m => m.key !== form.monthFor)

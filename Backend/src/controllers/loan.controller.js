@@ -214,5 +214,37 @@ const updateLoanStatus = async (req, res) => {
     }
 }
 
+const extendLoan = async (req, res) => {
+    try {
+        const { loanId } = req.params
+        const { extraMonths } = req.body
 
-export { createLoan, deleteLoan, getLoansByBorrower, updateLoanWitness, updateLoanStatus }
+        const loan = await Loan.findById(loanId)
+        if (!loan) {
+            return res.status(404).json({
+                success: false,
+                message: `Loan not found`
+            })
+        }
+
+        loan.durationMonths += Number(extraMonths)
+        // EMI stays exactly the same — totalAmount grows to match the extra months
+        loan.totalAmount = loan.emiAmount * loan.durationMonths
+        await loan.save()
+
+        res.status(200).json({
+            success: true,
+            message: `Loan extended by ${extraMonths} month(s)`,
+            loan
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: `Failed to extend loan: ${err.message}`
+        })
+    }
+}
+
+
+export { createLoan, deleteLoan, getLoansByBorrower, updateLoanWitness, updateLoanStatus, extendLoan }
