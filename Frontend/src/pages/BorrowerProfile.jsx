@@ -175,7 +175,7 @@ const BorrowerProfile = () => {
                                 <div>
                                     <p className="text-xs text-gray-400 uppercase font-medium">Started</p>
                                     <p className="text-gray-800 font-semibold mt-1">
-                                        {new Date(activeLoan.createdAt).toLocaleDateString('en-IN', {
+                                        {new Date(activeLoan.startDate).toLocaleDateString('en-IN', {
                                             year: 'numeric', month: 'long', day: 'numeric'
                                         })}
                                     </p>
@@ -231,7 +231,7 @@ const BorrowerProfile = () => {
                                                 </span>
                                             </p>
                                             <p className="text-xs text-gray-400 mt-0.5">
-                                                {new Date(loan.createdAt).toLocaleDateString('en-IN', {
+                                                {new Date(loan.startDate).toLocaleDateString('en-IN', {
                                                     year: 'numeric', month: 'long'
                                                 })}
                                             </p>

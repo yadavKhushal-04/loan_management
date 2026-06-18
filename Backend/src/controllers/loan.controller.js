@@ -25,7 +25,7 @@ const createLoan = async (req, res) => {
             durationMonths,
             totalAmount,
             emiAmount,
-            stratDate: startDate || new Date(),
+            startDate: startDate || new Date(),
             witness: witness?.name ? witness : null
         })
 
