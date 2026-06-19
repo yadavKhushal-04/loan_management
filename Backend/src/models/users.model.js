@@ -20,7 +20,7 @@ const userSchema = new schema(
         role: {
             type: String,
             enum: ["admin", "viewer"],
-            default: "admin"
+            default: "viewer"
         },
         refreshToken: {
             tupe: String,

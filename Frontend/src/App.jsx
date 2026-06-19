@@ -8,7 +8,7 @@ import BorrowerProfile from "./pages/BorrowerProfile"
 import AddBorrower from "./pages/AddBorrower"
 import AddLoan from "./pages/AddLoan"
 import NotFound from "./pages/NotFound"
-import Register from "./pages/Register"
+// import Register from "./pages/Register"
 import AddPayment from "./pages/AddPayment"
 import Defaulters from "./pages/Defaulters"
 
@@ -20,7 +20,7 @@ function App() {
             <Toaster position="top-right" />
             <Routes>
                 <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                {/* <Route path="/register" element={<Register />} /> */}
 
                 <Route path="/dashboard" element={
                     <ProtectedRoute>

@@ -1,5 +1,6 @@
 import { useState , useEffect} from "react"
-import { useNavigate, Link } from "react-router-dom"
+// import { useNavigate, Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "../store/authStore"
 import api from "../api/axios"
 import toast from "react-hot-toast"
@@ -98,12 +99,12 @@ const Login = () => {
                         {loading ? 'Signing in...' : 'Sign In'}
                     </button>
 
-                    <p className="text-center text-sm text-gray-500">
+                    {/* <p className="text-center text-sm text-gray-500">
                         Don't have an account?{' '}
                         <Link to="/register" className="text-blue-600 hover:underline font-medium">
                             Register
                         </Link>
-                    </p>
+                    </p> */}
                 </form>
             </div>
         </div>
