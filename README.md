@@ -97,38 +97,38 @@ All routes are prefixed with `/api`. Protected routes require a valid access tok
 | PATCH | `/me` | Update current user profile | Authenticated |
 
 ### Borrowers (`/api/borrowers`)
-| Method | Endpoint | Description | Access |
-|---|---|---|---|
-| GET | `/` | List all borrowers | Authenticated |
-| POST | `/create` | Create a borrower | Admin |
-| GET | `/status/overdue` | List overdue/defaulting borrowers | Admin |
-| GET | `/:id` | Get a borrower by ID | Authenticated |
-| PATCH | `/:id` | Update a borrower | Admin |
-| PATCH | `/:id/status` | Update a borrower's status | Admin |
-| DELETE | `/:id` | Delete a borrower | Admin |
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/` | List all borrowers |
+| POST | `/create` | Create a borrower |
+| GET | `/status/overdue` | List overdue/defaulting borrowers |
+| GET | `/:id` | Get a borrower by ID |
+| PATCH | `/:id` | Update a borrower |
+| PATCH | `/:id/status` | Update a borrower's status |
+| DELETE | `/:id` | Delete a borrower |
 
 ### Loans (`/api/loans`)
-| Method | Endpoint | Description | Access |
-|---|---|---|---|
-| POST | `/:borrowerId` | Create a loan for a borrower | Admin |
-| GET | `/:borrowerId` | List loans for a borrower | Authenticated |
-| PATCH | `/:loanId/witness` | Update loan witness details | Admin |
-| PATCH | `/:loanId/status` | Update loan status | Admin |
-| PATCH | `/:loanId/extend` | Extend a loan's duration | Admin |
-| DELETE | `/:loanId` | Delete a loan | Admin |
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/:borrowerId` | Create a loan for a borrower |
+| GET | `/:borrowerId` | List loans for a borrower |
+| PATCH | `/:loanId/witness` | Update loan witness details |
+| PATCH | `/:loanId/status` | Update loan status |
+| PATCH | `/:loanId/extend` | Extend a loan's duration |
+| DELETE | `/:loanId` | Delete a loan |
 
 ### Payments (`/api/payments`)
-| Method | Endpoint | Description | Access |
-|---|---|---|---|
-| POST | `/:loanId` | Add a payment for a loan | Admin |
-| GET | `/:loanId` | Get payment history for a loan | Authenticated |
-| GET | `/:loanId/summary` | Get repayment summary for a loan | Authenticated |
-| DELETE | `/:paymentId/delete` | Delete a payment | Admin |
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/:loanId` | Add a payment for a loan |
+| GET | `/:loanId` | Get payment history for a loan |
+| GET | `/:loanId/summary` | Get repayment summary for a loan |
+| DELETE | `/:paymentId/delete` | Delete a payment |
 
 ### Stats (`/api/stats`)
-| Method | Endpoint | Description | Access |
-|---|---|---|---|
-| GET | `/` | Get aggregate dashboard stats | Authenticated |
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/` | Get aggregate dashboard stats |
 
 ## Data Models
 
