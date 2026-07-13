@@ -4,6 +4,10 @@ A full-stack application for tracking borrowers, loans, and repayments. Built wi
 
 [Website link](https://loan-management-three-livid.vercel.app/borrowers/6a2fb0b0f92264639ebf9f85)
 
+### Demo Credentials:
+username: DemoUser <br>
+pass: DemoPassword
+
 ## Screenshots
 
 <!-- Add screenshots of the live site here -->

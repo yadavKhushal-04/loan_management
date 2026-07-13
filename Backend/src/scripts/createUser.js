@@ -1,19 +1,19 @@
 // Run this locally whenever you need to create a new account.
 // Usage: node scripts/createUser.js
 
-import mongoose from "mongoose"
 import dotenv from "dotenv"
-import { User } from "../src/models/users.model.js"
+import connectDB from "../DB/index.js"
+import { User } from "../models/users.model.js"
 
 dotenv.config()
 
 const createUser = async () => {
-    await mongoose.connect(process.env.MONGODB_URI)
+    await connectDB()
 
     // ---- edit these before running ----
-    const userName = "newusername"
-    const fullName = "New User Full Name"
-    const password = "choose_a_strong_password"
+    const userName = "DemoUser"
+    const fullName = "Demo User"
+    const password = "DemoPassword"
     const role = "viewer"   // or "admin"
     // ------------------------------------
 
