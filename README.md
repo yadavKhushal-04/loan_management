@@ -2,7 +2,7 @@
 
 A full-stack application for tracking borrowers, loans, and repayments. Built with a Node.js/Express/MongoDB backend and a React (Vite) frontend, it lets an admin manage borrowers and loans, log EMI payments, monitor overdue accounts, and view repayment summaries on a dashboard.
 
-[Website link](https://loan-management-three-livid.vercel.app/borrowers/6a2fb0b0f92264639ebf9f85)
+[Website link](https://loan-management-three-livid.vercel.app)
 
 ### Demo Credentials:
 username: DemoUser <br>
